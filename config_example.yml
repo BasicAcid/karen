@@ -1,0 +1,44 @@
+# Node Exporter Monitor configuration
+
+# Node exporter connection settings
+node_exporter:
+  host: "localhost"
+  port: 9100
+
+# Email settings
+email:
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  use_tls: true
+  from:
+  to:
+  username:
+  password:
+
+# Rules for metrics
+rules:
+  node_memory_MemAvailable_bytes:
+    lt: 1000000000  # Alert if less than ~1GB available
+    label_match:
+      job: "node"
+
+  node_filesystem_avail_bytes:
+    lt: 10737418240  # Alert if less than 10GB available
+    label_match:
+      mountpoint: "^/$"  # Only root filesystem
+      fstype: "^(?!tmpfs|devtmpfs)"  # Exclude temporary filesystems
+
+  node_load1:
+    gt: 4  # Alert if 1-minute load average is above 4
+
+  node_filesystem_files_free:
+    lt: 1000  # Alert if less than 1000 inodes free
+    label_match:
+      mountpoint: "^/$"
+
+# How often to check (in seconds)
+check_interval: 300  # 5 minutes
+
+# Logging configuration
+logging:
+  file: "node_exporter_monitor.log"
